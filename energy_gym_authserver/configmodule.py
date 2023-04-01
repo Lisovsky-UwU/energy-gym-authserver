@@ -19,6 +19,16 @@ class LocalServerSettings(Fieldset):
         return f'{self.host}:{self.port}'
 
 
+class MainServerConnectionSettings(Fieldset):
+
+    token = Field[str]('').label('Токен доступа')
+    base_url = Field[str]('127.0.0.1:5010/api/v1').label('Адрес для API главного сервера')
+
+    @property
+    def formated_base_url(self) -> str:
+        return f'{self.base_url}{"" if self.base_url[-1] == "/" else "/"}'
+
+
 class DataBaseSettings(Fieldset):
 
     host      = Field[str]('127.0.0.1').label('Адрес')
@@ -36,6 +46,7 @@ class Config(Metaconfig):
 
     common          = Field[CommonSettings]().label('Общие настройки')
     local_server    = Field[LocalServerSettings]().label('Настройки локального сервера')
+    main_server     = Field[MainServerConnectionSettings]().label('Настройки подключения к главному серверу')
     database        = Field[DataBaseSettings]().label('Настройки базы данных')
 
 
