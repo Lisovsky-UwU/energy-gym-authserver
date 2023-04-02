@@ -19,4 +19,5 @@ def session_factory(**kwargs):
     )
 
 
+from .token import Token
 from .user import User
