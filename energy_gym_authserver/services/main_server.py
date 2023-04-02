@@ -9,22 +9,34 @@ from ..models import MainServerApiMethods
 
 
 class MainServerService:
-    
-    async def send_request(self, method: MainServerApiMethods, body: Optional[Dict] = None):
+
+    def __init__(self, timeout: int = 30):
+        self.timeout = timeout
+
+
+    @property
+    def timeout_aiohttp(self) -> aiohttp.ClientTimeout:
+        return aiohttp.ClientTimeout(total=self.timeout)
+
+
+    async def send_request(self, method: str, endpoint: str, body: Optional[Dict] = None):
         try:
             async with aiohttp.ClientSession(timeout=self.timeout_aiohttp) as session:
-                logger.info(f'Запрос к главному серверу {method}: {body}')
+                logger.info(f'Запрос к главному серверу {method} {endpoint}: {body}')
                 async with session.request(
-                    method  = method.value['method'],
-                    url     = config.main_server.formated_base_url + method.value['endpoint'],
+                    method  = method,
+                    url     = config.main_server.formated_base_url + endpoint,
                     json    = body,
                     headers = { 'Token': config.main_server.token }
                 ) as resp:
+                    if resp.status == 405:
+                        raise MainServerRequestException('Метод не поддерживается', status_code=405)
+                    
                     resp_text = await resp.json()
-                    if resp_text['error']:
-                        raise MainServerRequestException(resp_text['error_message'])
-                    else:
+                    if resp.status == 200:
                         return resp_text['data']
+                    else:
+                        raise MainServerRequestException(resp_text['error_message'], status_code=resp.status)
         
-        except aiohttp.ClientError:
-            raise MainServerApiMethods('Ошибка подключения к серверу')
+        except aiohttp.ClientConnectionError:
+            raise MainServerRequestException('Ошибка подключения к главному серверу')
