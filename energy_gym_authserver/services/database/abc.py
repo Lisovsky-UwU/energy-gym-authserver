@@ -120,7 +120,12 @@ class BaseService(Generic[T]):
 
 
     def delete(self, item: T, flush: bool = False) -> None:
-        self.session.delete(item)
+        if hasattr(self.model, 'deleted'):
+            item.deleted = True
+            self.update(item, flush=flush)
+        else:
+            self.session.delete(item)
+
         if flush:
             self.session.flush((item,))
 
