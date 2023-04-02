@@ -4,14 +4,14 @@ from typing import List
 class AvailableTimeAccess:
 
     '''Права доступов для информации по дням для записи'''
-    ADD     = 'available time add'
+    CREATE  = 'available time create'
     GET     = 'available time get'
     DELETE  = 'available time delete'
 
     @classmethod
     def get_all_rights(cls) -> List:
         return [
-            cls.ADD,
+            cls.CREATE,
             cls.GET,
             cls.DELETE,
         ]
@@ -21,7 +21,7 @@ class UserAccess:
 
     '''Права доступов для информации по пользователям'''
     EDITANY = 'user edit any'
-    ADD     = 'user add'
+    CREATE  = 'user create'
     GET     = 'user get'
     DELETE  = 'user delete'
 
@@ -29,7 +29,7 @@ class UserAccess:
     def get_all_rights(cls) -> List:
         return [
             cls.EDITANY,
-            cls.ADD,
+            cls.CREATE,
             cls.GET,
             cls.DELETE,
         ]
@@ -39,7 +39,7 @@ class EntyAccess:
     '''Права доступов для информации по записям'''
 
     EDITANY = 'entry edit any'
-    ADD     = 'entry add'
+    CREATE  = 'entry create'
     GET     = 'entry get'
     DELETE  = 'entry delete'
 
@@ -47,7 +47,7 @@ class EntyAccess:
     def get_all_rights(cls) -> List:
         return [
             cls.EDITANY,
-            cls.ADD,
+            cls.CREATE,
             cls.GET,
             cls.DELETE,
         ]

@@ -7,7 +7,7 @@ class UserRole(Enum):
     
     STUDENT = [
         AccesRights.AVAILABLETIME.GET,
-        AccesRights.ENTRY.ADD,
+        AccesRights.ENTRY.CREATE,
         AccesRights.ENTRY.GET,
         AccesRights.ENTRY.DELETE,
         AccesRights.USER.GET,
