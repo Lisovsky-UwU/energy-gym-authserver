@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from .ext.parametrica import Field
 from .ext.parametrica import Fieldset
 from .ext.parametrica import Metaconfig
@@ -7,6 +9,8 @@ from .ext.parametrica.io import YAMLFileConfigIO
 class CommonSettings(Fieldset):
 
     use_dev         = Field[bool](True).label('Использовать ли окружение разработки')
+    secret_key      = Field[str](uuid4()).label('Секретный ключ для генерации токенов авторизации')
+    datetime_format = Field[str]('%d-%m-%Y %H:%M:%S').label('Формат для даты и времени')
 
 
 class LocalServerSettings(Fieldset):
