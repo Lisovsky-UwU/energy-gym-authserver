@@ -2,6 +2,7 @@ from loguru import logger
 
 from .log import init_logger
 from .app import build_app
+from .fabrics import ControllerFabric
 from .configmodule import config
 from .services.database import UserDBService
 from .services.database import TokenDBService
@@ -10,6 +11,9 @@ from .services.database import TokenDBService
 def start():
     init_logger()
     try:
+        ControllerFabric.user_db_service_type = UserDBService
+        ControllerFabric.token_db_service_type = TokenDBService
+
         logger.info('Сборка сервера')
         app = build_app(UserDBService, TokenDBService)
         logger.info('Запуск сервера')
