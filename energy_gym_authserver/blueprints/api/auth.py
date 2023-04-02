@@ -5,18 +5,24 @@ from flask_login import logout_user
 from flask_login import login_required
 from flask_login import current_user
 
-from ...exceptions import LoginError
+from ...fabrics import ControllerFabric
 from ...exceptions import InvalidRequestException
-from ...services.database import UserDBService
-from ...services.database import TokenDBService
 
 
 auth_bl = Blueprint('auth', 'auth')
 
 
-@auth_bl.post('/sing-up')
-async def sing_up():
-    return { 'result': 'sing-up' }
+@auth_bl.post('/signup')
+async def signup():
+    data = await request.get_json()
+    if data is None:
+        raise InvalidRequestException('Тело запроса должно быть в формате JSON')
+
+    user = ControllerFabric.user_controller().registrate_user(**data)
+
+    login_user(user, remember = True if data.get('remember') else False)
+
+    return { 'token': ControllerFabric.token_controller().generate_token(user).token }
 
 
 @auth_bl.post('/login')
@@ -25,19 +31,14 @@ async def login():
     if data is None:
         raise InvalidRequestException('Тело запроса должно быть в формате JSON')
 
-    with UserDBService() as service:
-        user = service.get_by_student_card(data['student_card'])
-    
-    if user is None or user.password != data['password']:
-        raise LoginError('Неверный логин или пароль')
-    
-    with TokenDBService() as service:
-        token = service.create_for_user(user)
-        service.commit()
+    user = ControllerFabric.user_controller().login_user(
+        student_card = data['student_card'],
+        password     = data['password']
+    )
 
-    login_user(user, remember=True if data['remember'] else False)
+    login_user(user, remember=True if data.get('remember') else False)
 
-    return { 'token': token.token }
+    return { 'token': ControllerFabric.token_controller().generate_token(user).token }
 
 
 @auth_bl.get('/check-login')
@@ -51,10 +52,6 @@ async def check_login():
 async def logout():
     token = request.headers.get('Token')
     if token is not None:
-        with TokenDBService() as service:
-            db_token = service.get_by_token(token)
-            if db_token is not None:
-                service.delete(db_token)
-                service.commit()
+        ControllerFabric.token_controller().delete_token(token)
 
     return { 'result': logout_user() }
