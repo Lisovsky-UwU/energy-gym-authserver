@@ -86,6 +86,19 @@ class BaseService(Generic[T]):
         return query.all()
 
 
+    def get_filtered_first(
+        self, 
+        expression, 
+        get_deleted: Optional[bool] = False
+    ) -> Optional[T]:
+        query = self.query.filter(expression)
+
+        if not get_deleted and hasattr(self.model, 'deleted'):
+            query = query.filter(self.model.deleted == False)
+
+        return query.first()
+
+
     def create(self, item: T, flush: bool = True) -> T:
         self.session.add(item)
         if flush:
