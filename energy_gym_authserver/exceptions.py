@@ -9,7 +9,7 @@ class DataBaseException(EnergyGymAuthServerException):
 class MainServerRequestException(EnergyGymAuthServerException):
     '''Исключение при возвращении ошибки от главного сервера'''
 
-    def __init__(self, status_code: int = 500, *args: object) -> None:
+    def __init__(self, *args: object, status_code: int = 500) -> None:
         super().__init__(*args)
         self.status_code = status_code
 
