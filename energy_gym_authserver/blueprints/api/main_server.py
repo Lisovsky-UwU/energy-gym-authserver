@@ -27,4 +27,5 @@ async def main_server_api(path: str):
         method   = request.method,
         endpoint = method.endpoint,
         body     = (await request.get_json()),
+        headers  = { 'user-id': str(current_user.id) },
     )

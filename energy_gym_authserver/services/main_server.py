@@ -19,15 +19,22 @@ class MainServerService:
         return aiohttp.ClientTimeout(total=self.timeout)
 
 
-    async def send_request(self, method: str, endpoint: str, body: Optional[Dict] = None):
+    async def send_request(
+        self, 
+        method: str, 
+        endpoint: str, 
+        body: Optional[Dict] = None,
+        headers: Optional[Dict] = {}
+    ):
         try:
             async with aiohttp.ClientSession(timeout=self.timeout_aiohttp) as session:
                 logger.info(f'Запрос к главному серверу {method} {endpoint}: {body}')
+                headers['Token'] = config.main_server.token
                 async with session.request(
                     method  = method,
                     url     = config.main_server.formated_base_url + endpoint,
                     json    = body,
-                    headers = { 'Token': config.main_server.token }
+                    headers = headers,
                 ) as resp:
                     if resp.status == 405:
                         raise MainServerRequestException('Метод не поддерживается', status_code=405)
