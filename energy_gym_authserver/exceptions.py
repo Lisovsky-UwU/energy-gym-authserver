@@ -9,3 +9,7 @@ class MainServerRequestException(EnergyGymAuthServerException):
 
 class InvalidRequestException(EnergyGymAuthServerException):
     '''Исключение при неверном запросе'''
+
+class LoginError(EnergyGymAuthServerException):
+    '''Исключение при ошибке входа'''
+    status_code = 401
