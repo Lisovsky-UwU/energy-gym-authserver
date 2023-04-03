@@ -1,19 +1,20 @@
 from enum import Enum
 
-from .access_rights import AccesRights
+from .access_rights import AccessRights
 
 
 class UserRole(Enum):
     
     STUDENT = [
-        AccesRights.AVAILABLETIME.GET,
-        AccesRights.ENTRY.CREATE,
-        AccesRights.ENTRY.GET,
-        AccesRights.ENTRY.DELETE,
-        AccesRights.USER.GET,
-        AccesRights.USER.DELETE
+        AccessRights.ADS.GET,
+        AccessRights.AVAILABLETIME.GET,
+        AccessRights.ENTRY.CREATE,
+        AccessRights.ENTRY.GET,
+        AccessRights.ENTRY.DELETE,
+        AccessRights.USER.GET,
+        AccessRights.USER.DELETE
     ]
 
     ADMIN = [
-        *AccesRights.get_all_rights()
+        *AccessRights.get_all_rights()
     ]
