@@ -23,7 +23,7 @@ class User(Base, UserMixin):
     role          = Column(String(15), nullable=False, index=True)
     deleted       = Column(Boolean, default=False)
 
-    tokens = relationship('Token', uselist=False, back_populates='users')
+    tokens        = relationship('Token', back_populates='users',  uselist=True)
 
 
     def to_dict(
