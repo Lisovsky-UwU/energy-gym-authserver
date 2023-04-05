@@ -7,6 +7,7 @@ from ...models import UserRole
 from ...models import MainServerApiMethods
 from ...services import MainServerService
 from ...exceptions import AccessRightsException
+from ...exceptions import InvalidRequestException
 
 
 main_server_bl = Blueprint('main_server', 'main_server')
@@ -22,6 +23,9 @@ async def main_server_api(path: str):
     
     if method.access not in UserRole[current_user.role].value:
         raise AccessRightsException('Недостаточно прав')
+
+    if method.needjson and request.headers.get('Content-Type') != 'application/json':
+        raise InvalidRequestException('Тело запроса должно быть в формате JSON')
     
     return await MainServerService().send_request(
         method   = request.method,

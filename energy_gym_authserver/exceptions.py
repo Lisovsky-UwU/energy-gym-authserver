@@ -16,6 +16,7 @@ class MainServerRequestException(EnergyGymAuthServerException):
 
 class InvalidRequestException(EnergyGymAuthServerException):
     '''Исключение при неверном запросе'''
+    status_code = 400
 
 
 class LoginError(EnergyGymAuthServerException):
