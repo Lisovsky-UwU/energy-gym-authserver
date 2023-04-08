@@ -17,7 +17,9 @@ class User(Base, UserMixin):
 
     id            = Column(Integer, primary_key=True, autoincrement=True)
     student_card  = Column(Integer, nullable=False, unique=True)
-    name          = Column(String(70), nullable=False)
+    firstname     = Column(String(30), nullable=False)
+    secondname    = Column(String(30), nullable=False)
+    surname       = Column(String(30), nullable=False, default='')
     group         = Column(String(20), nullable=False)
     password      = Column(String(60), nullable=False)
     role          = Column(String(15), nullable=False, index=True)
@@ -34,9 +36,11 @@ class User(Base, UserMixin):
     ) -> Dict[str, Any]:
         _dict = {
             'student_card' : self.student_card,
-            'name' : self.name,
-            'group': self.group,
-            'role': self.role,
+            'firstname'    : self.firstname,
+            'secondname'   : self.secondname,
+            'surname'      : self.surname,
+            'group'        : self.group,
+            'role'         : self.role,
         }
         
         if get_id: _dict['id'] = self.id
