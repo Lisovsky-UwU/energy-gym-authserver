@@ -16,6 +16,24 @@ class UserRole(Enum):
         AccessRights.USER.DELETE
     ]
 
+    TRAINER = [
+        AccessRights.ADS.GET,
+        AccessRights.ADS.EDIT,
+        AccessRights.ADS.CREATE,
+        AccessRights.ADS.DELETE,
+        AccessRights.AVAILABLETIME.GET,
+        AccessRights.AVAILABLETIME.GETANY,
+        AccessRights.ENTRY.GET,
+        AccessRights.ENTRY.GETANY,
+        AccessRights.USER.GET,
+        AccessRights.USER.GETANY,
+        AccessRights.USER.EDIT,
+        AccessRights.USER.DELETE,
+        AccessRights.VISIT.GET,
+        AccessRights.VISIT.GETANY,
+        AccessRights.VISIT.EDIT,
+    ]
+
     ADMIN = [
         *AccessRights.get_all_rights()
     ]
