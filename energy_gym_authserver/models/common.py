@@ -40,3 +40,8 @@ class MainServerApiMethods(Enum):
     USER_EDIT         = ApiMethod(access = AccessRights.USER.EDIT,            endpoint = 'user/edit',         needjson = True)
     USER_EDIT_ANY     = ApiMethod(access = AccessRights.USER.EDITANY,         endpoint = 'user/edit-any',     needjson = True)
     USER_DELETE_ANY   = ApiMethod(access = AccessRights.USER.EDITANY,         endpoint = 'user/delete-any',   needjson = True)
+
+    VISIT_CREATE      = ApiMethod(access = AccessRights.VISIT.CREATE,         endpoint = 'visit/create',      needjson = True)
+    VISIT_GET         = ApiMethod(access = AccessRights.VISIT.GET,            endpoint = 'visit/get',         needjson = False)
+    VISIT_GET_ANY     = ApiMethod(access = AccessRights.VISIT.GETANY,         endpoint = 'visit/get-any',     needjson = False)
+    VISIT_EDIT        = ApiMethod(access = AccessRights.VISIT.EDIT,           endpoint = 'visit/edit',        needjson = True)

@@ -83,6 +83,24 @@ class EntyAccess:
         ]
 
 
+class VisitAccess:
+    '''Права доступов для информации по посещениям'''
+
+    CREATE  = 'visit create'
+    EDIT = 'visit edit any'
+    GET     = 'visit get'
+    GETANY  = 'visit get anu'
+
+    @classmethod
+    def get_all_rights(cls) -> List:
+        return [
+            cls.EDIT,
+            cls.GETANY,
+            cls.CREATE,
+            cls.GET,
+        ]
+
+
 class AccessRights:
     '''Права доступов для редактирования и получения данных'''
 
@@ -90,6 +108,7 @@ class AccessRights:
     AVAILABLETIME = AvailableTimeAccess
     USER          = UserAccess
     ENTRY         = EntyAccess
+    VISIT         = VisitAccess
 
     @classmethod
     def get_all_rights(cls) -> List:
@@ -98,4 +117,5 @@ class AccessRights:
             *cls.AVAILABLETIME.get_all_rights(),
             *cls.USER.get_all_rights(),
             *cls.ENTRY.get_all_rights(),
+            *cls.VISIT.get_all_rights(),
         ]
