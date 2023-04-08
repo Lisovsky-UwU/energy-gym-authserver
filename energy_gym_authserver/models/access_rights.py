@@ -6,6 +6,7 @@ class AdsAccess:
     '''Права допступов для информации по объявлениям'''
     CREATE = 'ads create'
     GET    = 'ads get'
+    GETANY = 'ads get any'
     EDIT   = 'ads edit'
     DELETE = 'ads delete'
 
@@ -14,6 +15,7 @@ class AdsAccess:
         return [
             cls.CREATE,
             cls.GET,
+            cls.GETANY,
             cls.EDIT,
             cls.DELETE,
         ]
@@ -24,6 +26,7 @@ class AvailableTimeAccess:
     '''Права доступов для информации по дням для записи'''
     CREATE  = 'available time create'
     GET     = 'available time get'
+    GETANY  = 'available time get any'
     EDIT    = 'available time edit'
     DELETE  = 'available time delete'
 
@@ -32,6 +35,7 @@ class AvailableTimeAccess:
         return [
             cls.CREATE,
             cls.GET,
+            cls.GETANY,
             cls.EDIT,
             cls.DELETE,
         ]
