@@ -20,9 +20,11 @@ async def signup():
 
     user = ControllerFabric.user_controller().registrate_user(**data)
 
-    login_user(user, remember = True if data.get('remember') else False)
-
-    return { 'token': ControllerFabric.token_controller().generate_token(user).token }
+    if data.get('token') == True:
+        return { 'token': ControllerFabric.token_controller().generate_token(user).token }
+    else:
+        login_user(user, remember = True if data.get('remember') else False)
+        return user.to_dict()
 
 
 @auth_bl.post('/login')
@@ -36,9 +38,11 @@ async def login():
         password     = data['password']
     )
 
-    login_user(user, remember=True if data.get('remember') else False)
-
-    return { 'token': ControllerFabric.token_controller().generate_token(user).token }
+    if data.get('token') == True:
+        return { 'token': ControllerFabric.token_controller().generate_token(user).token }
+    else:
+        login_user(user, remember = True if data.get('remember') else False)
+        return user.to_dict()
 
 
 @auth_bl.get('/check-login')
