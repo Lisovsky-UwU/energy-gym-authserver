@@ -1,9 +1,7 @@
-from loguru import logger
-
 from .log import init_logger
 from .app import build_app
+from .app import run_app
 from .fabrics import ControllerFabric
-from .configmodule import config
 from .services.database import UserDBService
 from .services.database import TokenDBService
 
@@ -14,13 +12,11 @@ def start():
         ControllerFabric.user_db_service_type = UserDBService
         ControllerFabric.token_db_service_type = TokenDBService
 
-        logger.info('Сборка сервера')
-        app = build_app(UserDBService, TokenDBService)
-        logger.info('Запуск сервера')
-        app.run(
-            host=config.local_server.host,
-            port=config.local_server.port,
-            use_reloader=False
+        run_app(
+            build_app(
+                UserDBService,
+                TokenDBService
+            )
         )
     except KeyboardInterrupt:
         pass
