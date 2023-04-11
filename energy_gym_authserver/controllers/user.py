@@ -1,4 +1,5 @@
 from typing import Type
+from loguru import logger
 
 from ..orm import User
 from ..models import UserRole
@@ -34,6 +35,7 @@ class UserControleer:
                 )
             )
             user_service.commit()
+            logger.trace(f'Зарегистрирован новый пользователь: {user.to_dict(get_id = True)}')
 
             return user
         

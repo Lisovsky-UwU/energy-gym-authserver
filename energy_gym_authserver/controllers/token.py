@@ -1,4 +1,5 @@
 from typing import Type
+from loguru import logger
 
 from ..orm import User
 from ..orm import Token
@@ -15,6 +16,7 @@ class TokenController:
             token = service.create_for_user(user)
             service.commit()
 
+        logger.trace(f'Сгенерирован новый токен для пользователя с ID {user.id}')
         return token
     
 

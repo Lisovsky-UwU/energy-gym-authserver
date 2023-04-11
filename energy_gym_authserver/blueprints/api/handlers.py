@@ -1,8 +1,11 @@
 import json
 import quart
+from loguru import logger
+from flask_login import current_user
 
 from . import api
 from ...exceptions import InvalidRequestException
+from ...exceptions import EnergyGymAuthServerException
 
 
 @api.after_request
@@ -21,6 +24,9 @@ async def json_chek():
 
 @api.errorhandler(Exception)
 async def error_handle(error: Exception) -> quart.Response:
+    if not isinstance(error, EnergyGymAuthServerException):
+        logger.exception(f'Непредвиденная ошибка у пользователя с id = {current_user.id}: {error}')
+
     response = {
         'error': True,
         'error_type': type(error).__name__,

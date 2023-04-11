@@ -1,6 +1,7 @@
 from quart import Blueprint
 from quart import request
 from quart import jsonify
+from loguru import logger
 from flask_login import login_required
 from flask_login import current_user
 
@@ -20,9 +21,11 @@ async def main_server_api(path: str):
     try:
         method = MainServerApiMethods[path.upper().replace('-', '_').replace('/', '_')].value
     except KeyError:
+        logger.info(f'Попытка получить доступ к несуществующему методу пользователем с ID {current_user.id}: path = {path}')
         raise AccessRightsException('Недостаточно прав')
     
     if method.access not in UserRole[current_user.role].value:
+        logger.info(f'Попытка получить доступ к методу без достаточных прав пользователем с ID {current_user.id}: path = {path}')
         raise AccessRightsException('Недостаточно прав')
 
     if method.needjson and request.headers.get('Content-Type') != 'application/json':
@@ -32,7 +35,7 @@ async def main_server_api(path: str):
         await MainServerService().send_request(
             method   = request.method,
             endpoint = method.endpoint,
+            user_id  = current_user.id,
             body     = (await request.get_json()),
-            headers  = { 'user-id': str(current_user.id) },
         )
     )

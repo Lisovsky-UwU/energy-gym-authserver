@@ -1,5 +1,6 @@
 from quart import Blueprint
 from quart import request
+from loguru import logger
 from flask_login import login_user
 from flask_login import logout_user
 from flask_login import login_required
@@ -23,6 +24,7 @@ async def signup():
     if data.get('token') == True:
         return { 'token': ControllerFabric.token_controller().generate_token(user).token }
     else:
+        logger.trace(f'Авторизация пользователя {user.id} с помощью сессии')
         login_user(user, remember = True if data.get('remember') else False)
         return user.to_dict()
 
@@ -41,6 +43,7 @@ async def login():
     if data.get('token') == True:
         return { 'token': ControllerFabric.token_controller().generate_token(user).token }
     else:
+        logger.trace(f'Авторизация пользователя {user.id} с помощью сессии')
         login_user(user, remember = True if data.get('remember') else False)
         return user.to_dict()
 
@@ -54,6 +57,8 @@ async def check_login():
 @auth_bl.get('/logout')
 @login_required
 async def logout():
+    logger.trace(f'Выход из системы пользователя {current_user.id}')
+
     token = request.headers.get('Token')
     if token is not None:
         ControllerFabric.token_controller().delete_token(token)

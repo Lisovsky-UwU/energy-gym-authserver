@@ -5,7 +5,6 @@ from loguru import logger
 
 from ..configmodule import config
 from ..exceptions import MainServerRequestException
-from ..models import MainServerApiMethods
 
 
 class MainServerService:
@@ -23,13 +22,15 @@ class MainServerService:
         self, 
         method: str, 
         endpoint: str, 
+        user_id: int = None,
         body: Optional[Dict] = None,
-        headers: Optional[Dict] = {}
+        headers: Optional[Dict] = {},
     ):
         try:
             async with aiohttp.ClientSession(timeout=self.timeout_aiohttp) as session:
-                logger.info(f'Запрос к главному серверу {method} {endpoint}: {body}')
+                logger.debug(f'Запрос пользователя с ID {user_id} к главному серверу {method} {endpoint}: {body}')
                 headers['Token'] = config.main_server.token
+                headers['user-id'] = str(user_id)
                 async with session.request(
                     method  = method,
                     url     = config.main_server.formated_base_url + endpoint,
