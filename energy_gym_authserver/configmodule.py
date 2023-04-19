@@ -40,7 +40,7 @@ class DataBaseSettings(Fieldset):
     user      = Field[str]('').label('Логин для доступа')
     password  = Field[str]('').label('Пароль для доступа')
     base_name = Field[str]('energy-gym').label('Название БД')
-    engine    = Field[str]('pg8000').lable('Движок для sqlalchemy')
+    engine    = Field[str]('pg8000').label('Движок для sqlalchemy')
 
     @property
     def connection_string(self) -> str:
