@@ -40,10 +40,11 @@ class DataBaseSettings(Fieldset):
     user      = Field[str]('').label('Логин для доступа')
     password  = Field[str]('').label('Пароль для доступа')
     base_name = Field[str]('energy-gym').label('Название БД')
+    engine    = Field[str]('pg8000').lable('Движок для sqlalchemy')
 
     @property
     def connection_string(self) -> str:
-        return f'postgresql+psycopg2://{self.user}:{self.password}@{self.host}:{self.port}/{self.base_name}'
+        return f'postgresql+{self.engine}://{self.user}:{self.password}@{self.host}:{self.port}/{self.base_name}'
 
 
 class Config(Metaconfig):
