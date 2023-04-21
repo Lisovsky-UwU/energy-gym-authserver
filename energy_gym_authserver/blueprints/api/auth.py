@@ -41,7 +41,11 @@ async def login():
     )
 
     if data.get('token') == True:
-        return { 'token': ControllerFabric.token_controller().generate_token(user).token }
+        logger.trace(f'Авторизация пользователя {user.id} с помощью токена')
+        return { 
+            'token': ControllerFabric.token_controller().generate_token(user).token,
+            'user_data': user.to_dict(),
+        }
     else:
         logger.trace(f'Авторизация пользователя {user.id} с помощью сессии')
         login_user(user, remember = True if data.get('remember') else False)
