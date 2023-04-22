@@ -25,7 +25,7 @@ async def json_chek():
 @api.errorhandler(Exception)
 async def error_handle(error: Exception) -> quart.Response:
     if not isinstance(error, EnergyGymAuthServerException):
-        logger.exception(f'Непредвиденная ошибка у пользователя с id = {current_user.id}: {error}')
+        logger.exception(f'Непредвиденная ошибка у пользователя с id = {current_user.id if hasattr(current_user, "id") else "Anonym"}: {error}')
 
     response = {
         'error': True,
