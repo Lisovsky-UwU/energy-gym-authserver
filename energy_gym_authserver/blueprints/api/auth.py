@@ -19,10 +19,20 @@ async def signup():
     if data is None:
         raise InvalidRequestException('Тело запроса должно быть в формате JSON')
 
-    user = ControllerFabric.user_controller().registrate_user(**data)
+    user = ControllerFabric.user_controller().registrate_user(
+        student_card = data['student_card'],
+        firstname    = data['firstname'],
+        secondname   = data['secondname'],
+        surname      = data['surname'],
+        group        = data['group'],
+        password     = data['password'],
+    )
 
     if data.get('token') == True:
-        return { 'token': ControllerFabric.token_controller().generate_token(user).token }
+        return { 
+            'token': ControllerFabric.token_controller().generate_token(user).token,
+            'user_data': user.to_dict(),
+        }
     else:
         logger.trace(f'Авторизация пользователя {user.id} с помощью сессии')
         login_user(user, remember = True if data.get('remember') else False)
