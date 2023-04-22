@@ -16,7 +16,7 @@ class UserRole(Enum):
         AccessRights.USER.DELETE
     ]
 
-    TRAINER = [
+    COACH = [
         AccessRights.ADS.GET,
         AccessRights.ADS.EDIT,
         AccessRights.ADS.CREATE,
