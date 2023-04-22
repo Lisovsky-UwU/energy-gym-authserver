@@ -17,7 +17,9 @@ class UserControleer:
     def registrate_user(
         self,
         student_card: int,
-        name: str,
+        firstname: str,
+        secondname: str,
+        surname: str,
         group: str,
         password: str
     ) -> User:
@@ -28,7 +30,9 @@ class UserControleer:
             user = user_service.create(
                 User(
                     student_card = student_card,
-                    name         = name,
+                    firstname    = firstname,
+                    secondname   = secondname,
+                    surname      = surname,
                     group        = group,
                     password     = password,
                     role         = UserRole.STUDENT.name,
