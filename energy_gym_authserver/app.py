@@ -12,6 +12,7 @@ from flask_login import LoginManager # use it becouse quart_login is broke
 
 from .configmodule import config
 from .blueprints import api_bl
+from .blueprints import webgui_bl
 from .exceptions import LoginError
 from .services.database import UserDBService
 from .services.database import TokenDBService
@@ -50,6 +51,7 @@ def build_app(user_service_type: Type[UserDBService], token_service_type: Type[T
 
     logger.info('Регистрация шаблонов')
     app.register_blueprint(api_bl, url_prefix='/api/v1')
+    app.register_blueprint(webgui_bl)
 
     if config.common.use_dev:
         logger.debug('Используется окружение разработки')
