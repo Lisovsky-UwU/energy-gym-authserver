@@ -1,16 +1,15 @@
-from quart import Blueprint
-from quart import request
+from quart import Blueprint, request
 from loguru import logger
-from flask_login import login_user
-from flask_login import logout_user
-from flask_login import login_required
-from flask_login import current_user
 
-from ...fabrics import ControllerFabric
-from ...exceptions import InvalidRequestException
+from ...orm import SessionCtx, User
+from ...services.database import UserDBService
+from ...controllers import AuthController
+from ...models import UserRole
+from ...exceptions import InvalidRequestException, RegistrationError, LoginError
+from ...utils import generate_hid
 
 
-auth_bl = Blueprint('auth', 'auth')
+auth_bl = Blueprint('auth', __name__)
 
 
 @auth_bl.post('/signup')
@@ -19,24 +18,30 @@ async def signup():
     if data is None:
         raise InvalidRequestException('Тело запроса должно быть в формате JSON')
 
-    user = ControllerFabric.user_controller().registrate_user(
-        student_card = data['student_card'],
-        firstname    = data['firstname'],
-        secondname   = data['secondname'],
-        surname      = data['surname'],
-        group        = data['group'],
-        password     = data['password'],
-    )
+    with SessionCtx() as session:
+        user_service = UserDBService(session)
 
-    if data.get('token') == True:
-        return { 
-            'token': ControllerFabric.token_controller().generate_token(user).token,
-            'user_data': user.to_dict(),
+        if user_service.get_by_student_card(data['studentCard']):
+                raise RegistrationError('Данный номер студенческого уже зарегистрирован')
+
+        user = user_service.create(
+            User(
+                student_card = data['studentCard'],
+                firstname    = data['firstname'],
+                secondname   = data['secondname'],
+                surname      = data['surname'],
+                group        = data['group'],
+                hid          = generate_hid(data['studentCard'], data['password']),
+                role         = UserRole.STUDENT.name,
+            )
+        )
+        user_service.commit()
+        logger.info(f'Зарегистрирован новый пользователь: {user.to_dict(get_id = True)}')
+
+        return {
+            'token': AuthController(user_service).generate_token(user.id),
+            'userData': user.to_dict()
         }
-    else:
-        logger.trace(f'Авторизация пользователя {user.id} с помощью сессии')
-        login_user(user, remember = True if data.get('remember') else False)
-        return user.to_dict()
 
 
 @auth_bl.post('/login')
@@ -45,36 +50,29 @@ async def login():
     if data is None:
         raise InvalidRequestException('Тело запроса должно быть в формате JSON')
 
-    user = ControllerFabric.user_controller().login_user(
-        student_card = data['student_card'],
-        password     = data['password']
-    )
+    with SessionCtx() as session:
+        user_service = UserDBService(session)
 
-    if data.get('token') == True:
-        logger.trace(f'Авторизация пользователя {user.id} с помощью токена')
-        return { 
-            'token': ControllerFabric.token_controller().generate_token(user).token,
-            'user_data': user.to_dict(),
+        user = user_service.get_by_student_card(data.get('login'))
+        if user is None:
+            raise LoginError('Неверный логин или пароль')
+        
+        if user.hid != generate_hid(data['login'], data['password']):
+            raise LoginError('Неверный логин или пароль')
+
+        logger.debug(f'Авторизация пользователя id={user.id}')
+        return {
+            'token': AuthController(user_service).generate_token(user.id),
+            'userData': user.to_dict()
         }
-    else:
-        logger.trace(f'Авторизация пользователя {user.id} с помощью сессии')
-        login_user(user, remember = True if data.get('remember') else False)
-        return user.to_dict()
 
 
 @auth_bl.get('/check-login')
-@login_required
 async def check_login():
-    return current_user.to_dict()
+    token = request.headers.get('Authorization')
+    if token is None:
+        raise LoginError('Отсутствует токен в заголовке запроса')
 
-
-@auth_bl.get('/logout')
-@login_required
-async def logout():
-    logger.trace(f'Выход из системы пользователя {current_user.id}')
-
-    token = request.headers.get('Token')
-    if token is not None:
-        ControllerFabric.token_controller().delete_token(token)
-
-    return { 'result': logout_user() }
+    with SessionCtx() as session:
+        user = AuthController(UserDBService(session)).get_user(token)
+        return user.to_dict()

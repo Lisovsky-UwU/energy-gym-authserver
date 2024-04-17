@@ -1,31 +1,40 @@
-from quart import Blueprint
-from quart import request
-from quart import jsonify
+from quart import Blueprint, request, jsonify
 from loguru import logger
-from flask_login import login_required
-from flask_login import current_user
 
-from ...models import UserRole
-from ...models import MainServerApiMethods
+from ...orm import SessionCtx
+from ...models import UserRole, MainServerApiMethods
 from ...services import MainServerService
-from ...exceptions import AccessRightsException
-from ...exceptions import InvalidRequestException
+from ...services.database import UserDBService
+from ...controllers import AuthController
+from ...exceptions import AccessRightsException, InvalidRequestException, LoginError
 
 
-main_server_bl = Blueprint('main_server', 'main_server')
+main_server_bl = Blueprint('main_server', __name__)
 
 
 @main_server_bl.route('/<path:path>', methods=['GET', 'POST', 'PUT', 'DELETE'])
-@login_required
 async def main_server_api(path: str):
+    token = request.headers.get('Authorization')
+    if token is None:
+        raise LoginError('Отсутствует токен в заголовке')
+
+    with SessionCtx() as session:
+        user = AuthController(
+            UserDBService(session)
+        ).get_user(token)
+
+        user_id = user.id
+        user_role = user.role
+
     try:
         method = MainServerApiMethods[path.upper().replace('-', '_').replace('/', '_')].value
     except KeyError:
-        logger.info(f'Попытка получить доступ к несуществующему методу пользователем с ID {current_user.id}: path = {path}')
+        logger.warning(f'Попытка получить доступ к несуществующему методу пользователем с ID {user_id}: path = {path}')
         raise AccessRightsException('Недостаточно прав')
+
     
-    if method.access not in UserRole[current_user.role].value:
-        logger.info(f'Попытка получить доступ к методу без достаточных прав пользователем с ID {current_user.id}: path = {path}')
+    if method.access not in UserRole[user_role].value:
+        logger.warning(f'Попытка получить доступ к методу без достаточных прав пользователем с ID {user_id}: path = {path}')
         raise AccessRightsException('Недостаточно прав')
 
     if method.needjson and request.headers.get('Content-Type') != 'application/json':
@@ -35,7 +44,7 @@ async def main_server_api(path: str):
         await MainServerService().send_request(
             method   = request.method,
             endpoint = method.endpoint,
-            user_id  = current_user.id,
+            user_id  = user_id,
             body     = (await request.get_json()),
         )
     )

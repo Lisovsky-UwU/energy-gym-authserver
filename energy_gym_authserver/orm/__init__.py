@@ -1,6 +1,7 @@
+from contextlib import contextmanager
+from loguru import logger
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.orm import create_session
+from sqlalchemy.orm import declarative_base, create_session, Session
 
 from ..configmodule import config
 
@@ -19,5 +20,24 @@ def session_factory(**kwargs):
     )
 
 
-from .token import Token
+@contextmanager
+def SessionCtx(old_session:Session = None):
+    
+    if old_session is None:
+        session: Session = session_factory()
+    else:
+        session: Session = old_session
+        
+    try:
+        yield session
+    except Exception:
+        logger.error('Session rollback because of exception')
+        session.rollback()
+        raise
+    else:
+        session.commit()
+    finally:
+        session.close() 
+
+
 from .user import User

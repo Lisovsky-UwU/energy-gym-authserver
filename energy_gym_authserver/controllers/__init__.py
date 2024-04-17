@@ -1,2 +1,1 @@
-from .user import UserControleer
-from .token import TokenController
+from .authorization import AuthController
