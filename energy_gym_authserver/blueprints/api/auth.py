@@ -44,27 +44,40 @@ async def signup():
         }
 
 
-@auth_bl.post('/login')
-async def login():
-    data = await request.get_json()
-    if data is None:
-        raise InvalidRequestException('Тело запроса должно быть в формате JSON')
-
+async def do_login(data, user_role: UserRole) -> dict:
     with SessionCtx() as session:
         user_service = UserDBService(session)
 
-        user = user_service.get_by_student_card(data.get('login'))
+        user = user_service.get_by_student_card(data.get('login'), user_role)
         if user is None:
             raise LoginError('Неверный логин или пароль')
         
         if user.hid != generate_hid(data['login'], data['password']):
             raise LoginError('Неверный логин или пароль')
 
-        logger.debug(f'Авторизация пользователя id={user.id}')
+        logger.debug(f'Авторизация студента id={user.id}')
         return {
             'token': AuthController(user_service).generate_token(user.id),
             'userData': user.to_dict()
         }
+
+
+@auth_bl.post('/login')
+async def login():
+    data = await request.get_json()
+    if data is None:
+        raise InvalidRequestException('Тело запроса должно быть в формате JSON')
+
+    return await do_login(data, UserRole.STUDENT)
+
+
+@auth_bl.post('/login/coach')
+async def login_coach():
+    data = await request.get_json()
+    if data is None:
+        raise InvalidRequestException('Тело запроса должно быть в формате JSON')
+
+    return await do_login(data, UserRole.COACH)
 
 
 @auth_bl.get('/check-login')

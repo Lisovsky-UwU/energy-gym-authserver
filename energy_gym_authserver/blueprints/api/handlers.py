@@ -1,5 +1,6 @@
 import json
 import quart
+from time import sleep
 from loguru import logger
 
 from . import api
@@ -23,6 +24,7 @@ async def response_format(response: quart.Response):
 
 @api.before_request
 async def json_chek():
+    sleep(3)
     logger.debug(f'{quart.request.remote_addr} [{quart.request.method}] {quart.request.path} -> {await quart.request.data}')
     if await quart.request.get_json() and not quart.request.is_json:
         raise InvalidRequestException('Тело запроса должно быть в формате JSON')
@@ -35,8 +37,8 @@ async def error_handle(error: Exception) -> quart.Response:
 
     response = {
         'error': True,
-        'error_type': type(error).__name__,
-        'error_message': str(error)
+        'errorType': type(error).__name__,
+        'errorMessage': str(error)
     }
     
     return response, error.status_code if hasattr(error, 'status_code') else 500 # type: ignore
