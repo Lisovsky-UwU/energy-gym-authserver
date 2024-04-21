@@ -24,7 +24,7 @@ async def response_format(response: quart.Response):
 
 @api.before_request
 async def json_chek():
-    sleep(3)
+    # sleep(3)
     logger.debug(f'{quart.request.remote_addr} [{quart.request.method}] {quart.request.path} -> {await quart.request.data}')
     if await quart.request.get_json() and not quart.request.is_json:
         raise InvalidRequestException('Тело запроса должно быть в формате JSON')

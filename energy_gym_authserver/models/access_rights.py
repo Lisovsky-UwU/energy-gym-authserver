@@ -45,7 +45,6 @@ class UserAccess:
 
     '''Права доступов для информации по пользователям'''
     EDITANY = 'user edit any'
-    GETANY  = 'user get any'
     CREATE  = 'user create'
     GET     = 'user get'
     EDIT    = 'user edit'
@@ -55,7 +54,6 @@ class UserAccess:
     def get_all_rights(cls) -> List:
         return [
             cls.EDITANY,
-            cls.GETANY,
             cls.CREATE,
             cls.GET,
             cls.EDIT,
@@ -86,17 +84,13 @@ class EntyAccess:
 class VisitAccess:
     '''Права доступов для информации по посещениям'''
 
-    CREATE  = 'visit create'
     EDIT = 'visit edit any'
     GET     = 'visit get'
-    GETANY  = 'visit get anu'
 
     @classmethod
     def get_all_rights(cls) -> List:
         return [
             cls.EDIT,
-            cls.GETANY,
-            cls.CREATE,
             cls.GET,
         ]
 

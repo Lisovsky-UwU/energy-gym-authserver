@@ -32,7 +32,7 @@ class User(Base):
             'secondname'  : self.secondname,
             'surname'     : self.surname,
             'group'       : self.group,
-            'role'        : self.role,
+            'role'        : self.role.name,
         }
         
         if get_id: _dict['id'] = self.id

@@ -11,7 +11,6 @@ class UserRole(Enum):
         AccessRights.ENTRY.CREATE,
         AccessRights.ENTRY.GET,
         AccessRights.ENTRY.DELETE,
-        AccessRights.USER.GET,
         AccessRights.USER.EDIT,
         AccessRights.USER.DELETE
     ]
@@ -26,11 +25,9 @@ class UserRole(Enum):
         AccessRights.ENTRY.GET,
         AccessRights.ENTRY.GETANY,
         AccessRights.USER.GET,
-        AccessRights.USER.GETANY,
         AccessRights.USER.EDIT,
         AccessRights.USER.DELETE,
         AccessRights.VISIT.GET,
-        AccessRights.VISIT.GETANY,
         AccessRights.VISIT.EDIT,
     ]
 

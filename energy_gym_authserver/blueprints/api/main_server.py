@@ -33,7 +33,7 @@ async def main_server_api(path: str):
         raise AccessRightsException('Недостаточно прав')
 
     
-    if method.access not in UserRole[user_role].value:
+    if method.access not in UserRole[user_role.name].value:
         logger.warning(f'Попытка получить доступ к методу без достаточных прав пользователем с ID {user_id}: path = {path}')
         raise AccessRightsException('Недостаточно прав')
 
