@@ -11,7 +11,7 @@ from ...exceptions import EnergyGymAuthServerException
 @api.after_request
 async def response_format(response: quart.Response):
     body = await response.get_json()
-    if isinstance(body, dict):
+    if isinstance(body, (dict, list)):
         logger.debug(f'{quart.request.remote_addr} [{quart.request.method}] {quart.request.path} <- ({response.status_code}) {body}')
     else:
         logger.debug(f'{quart.request.remote_addr} [{quart.request.method}] {quart.request.path} <- ({response.status_code}) Not json data')

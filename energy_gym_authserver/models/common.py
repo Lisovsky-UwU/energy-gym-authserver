@@ -13,11 +13,11 @@ class ApiMethod:
 
 class MainServerApiMethods(Enum):
 
-    ADS_CREATE         = ApiMethod(access = AccessRights.ADS.CREATE,           endpoint = 'ads/create',         needjson = True)
-    ADS_GET            = ApiMethod(access = AccessRights.ADS.GET,              endpoint = 'ads/get',            needjson = False)
-    ADS_GET_ANY        = ApiMethod(access = AccessRights.ADS.GETANY,           endpoint = 'ads/get-any',        needjson = False)
-    ADS_EDIT           = ApiMethod(access = AccessRights.ADS.EDIT,             endpoint = 'ads/edit',           needjson = True)
-    ADS_DELETE         = ApiMethod(access = AccessRights.ADS.DELETE,           endpoint = 'ads/delete',         needjson = True)
+    GYM_NEWS_CREATE    = ApiMethod(access = AccessRights.ADS.CREATE,           endpoint = 'gym-news/create',         needjson = True)
+    GYM_NEWS_GET       = ApiMethod(access = AccessRights.ADS.GET,              endpoint = 'gym-news/get',            needjson = False)
+    GYM_NEWS_GET_ANY   = ApiMethod(access = AccessRights.ADS.GETANY,           endpoint = 'gym-news/get-any',        needjson = False)
+    GYM_NEWS_EDIT      = ApiMethod(access = AccessRights.ADS.EDIT,             endpoint = 'gym-news/edit',           needjson = True)
+    GYM_NEWS_DELETE    = ApiMethod(access = AccessRights.ADS.DELETE,           endpoint = 'gym-news/delete',         needjson = True)
 
     AVTIME_CREATE      = ApiMethod(access = AccessRights.AVAILABLETIME.CREATE, endpoint = 'avtime/create',      needjson = True)
     AVTIME_GET         = ApiMethod(access = AccessRights.AVAILABLETIME.GET,    endpoint = 'avtime/get',         needjson = False)
