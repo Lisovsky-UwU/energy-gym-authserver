@@ -12,6 +12,19 @@ from ...utils import generate_hid
 auth_bl = Blueprint('auth', __name__)
 
 
+@auth_bl.post('/check-studcard')
+async def check_studcard():
+    data = await request.get_json()
+    if data is None:
+        raise InvalidRequestException('Тело запроса должно быть в формате JSON')
+    
+    with SessionCtx() as session:
+        user_serivce = UserDBService(session)
+        return {
+            'alreadyExists': user_serivce.get_by_student_card( int(data.get('studetCard')) ) is not None
+        }   
+
+
 @auth_bl.post('/signup')
 async def signup():
     data = await request.get_json()
@@ -22,7 +35,10 @@ async def signup():
         user_service = UserDBService(session)
 
         if user_service.get_by_student_card(data['studentCard']):
-                raise RegistrationError('Данный номер студенческого уже зарегистрирован')
+            raise RegistrationError('Данный номер студенческого уже зарегистрирован')
+
+        if len(data['password']) < 8:
+            raise RegistrationError('Пароль должен быть не меньше 8 символов')
 
         user = user_service.create(
             User(
