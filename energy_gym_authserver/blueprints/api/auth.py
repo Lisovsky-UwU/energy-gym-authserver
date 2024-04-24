@@ -18,10 +18,17 @@ async def check_studcard():
     if data is None:
         raise InvalidRequestException('Тело запроса должно быть в формате JSON')
     
+    student_card = str(data.get('studentCard'))
+    
+    if len(student_card) != 8:
+        raise InvalidRequestException('Длина студенческого билета должна быть 8 символов')
+    if not student_card.isdigit():
+        raise InvalidRequestException('Студенческий билет должен быть числом')
+    
     with SessionCtx() as session:
         user_serivce = UserDBService(session)
         return {
-            'alreadyExists': user_serivce.get_by_student_card( int(data.get('studetCard')) ) is not None
+            'alreadyExists': user_serivce.get_by_student_card( int(data.get('studentCard')) ) is not None
         }   
 
 
@@ -40,15 +47,22 @@ async def signup():
         if len(data['password']) < 8:
             raise RegistrationError('Пароль должен быть не меньше 8 символов')
 
+        student_card = str(data.get('studentCard'))
+    
+        if len(student_card) != 8:
+            raise InvalidRequestException('Длина студенческого билета должна быть 8 символов')
+        if not student_card.isdigit():
+            raise InvalidRequestException('Студенческий билет должен быть числом')
+
         user = user_service.create(
             User(
-                student_card = data['studentCard'],
+                student_card = int(data['studentCard']),
                 firstname    = data['firstname'],
                 secondname   = data['secondname'],
                 surname      = data['surname'],
                 group        = data['group'],
                 hid          = generate_hid(data['studentCard'], data['password']),
-                role         = UserRole.STUDENT.name,
+                role         = UserRole.STUDENT,
             )
         )
         user_service.commit()
