@@ -13,11 +13,11 @@ class ApiMethod:
 
 class MainServerApiMethods(Enum):
 
-    GYM_NEWS_CREATE    = ApiMethod(access = AccessRights.ADS.CREATE,           endpoint = 'gym-news/create',         needjson = True)
-    GYM_NEWS_GET       = ApiMethod(access = AccessRights.ADS.GET,              endpoint = 'gym-news/get',            needjson = False)
-    GYM_NEWS_GET_ANY   = ApiMethod(access = AccessRights.ADS.GETANY,           endpoint = 'gym-news/get-any',        needjson = False)
-    GYM_NEWS_EDIT      = ApiMethod(access = AccessRights.ADS.EDIT,             endpoint = 'gym-news/edit',           needjson = True)
-    GYM_NEWS_DELETE    = ApiMethod(access = AccessRights.ADS.DELETE,           endpoint = 'gym-news/delete',         needjson = True)
+    GYM_NEWS_CREATE    = ApiMethod(access = AccessRights.ADS.CREATE,           endpoint = 'gym-news/create',    needjson = True)
+    GYM_NEWS_GET       = ApiMethod(access = AccessRights.ADS.GET,              endpoint = 'gym-news/get',       needjson = False)
+    GYM_NEWS_GET_ANY   = ApiMethod(access = AccessRights.ADS.GETANY,           endpoint = 'gym-news/get-any',   needjson = False)
+    GYM_NEWS_EDIT      = ApiMethod(access = AccessRights.ADS.EDIT,             endpoint = 'gym-news/edit',      needjson = True)
+    GYM_NEWS_DELETE    = ApiMethod(access = AccessRights.ADS.DELETE,           endpoint = 'gym-news/delete',    needjson = True)
 
     AVTIME_CREATE      = ApiMethod(access = AccessRights.AVAILABLETIME.CREATE, endpoint = 'avtime/create',      needjson = True)
     AVTIME_GET         = ApiMethod(access = AccessRights.AVAILABLETIME.GET,    endpoint = 'avtime/get',         needjson = False)
@@ -43,3 +43,5 @@ class MainServerApiMethods(Enum):
 
     VISIT_GET          = ApiMethod(access = AccessRights.VISIT.GET,            endpoint = 'visit/get',          needjson = False)
     VISIT_EDIT         = ApiMethod(access = AccessRights.VISIT.EDIT,           endpoint = 'visit/edit',         needjson = True)
+
+    REPORT_VISITS      = ApiMethod(access = AccessRights.REPORTS,              endpoint = 'report/visits',      needjson = True)

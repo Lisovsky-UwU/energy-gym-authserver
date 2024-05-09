@@ -103,6 +103,7 @@ class AccessRights:
     USER          = UserAccess
     ENTRY         = EntyAccess
     VISIT         = VisitAccess
+    REPORTS       = 'generate reports'
 
     @classmethod
     def get_all_rights(cls) -> List:
@@ -112,4 +113,5 @@ class AccessRights:
             *cls.USER.get_all_rights(),
             *cls.ENTRY.get_all_rights(),
             *cls.VISIT.get_all_rights(),
+            cls.REPORTS
         ]

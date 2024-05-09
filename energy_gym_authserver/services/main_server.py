@@ -40,11 +40,14 @@ class MainServerService:
                     if resp.status == 405:
                         raise MainServerRequestException('Метод не поддерживается', status_code=405)
                     
-                    resp_text = await resp.json()
-                    if resp.status == 200:
-                        return resp_text['data']
+                    if resp.content_type == 'application/json':
+                        resp_text = await resp.json()
+                        if resp.status == 200:
+                            return resp_text['data']
+                        else:
+                            raise MainServerRequestException(resp_text['error_message'], status_code=resp.status)
                     else:
-                        raise MainServerRequestException(resp_text['error_message'], status_code=resp.status)
+                        return await resp.read()
         
         except aiohttp.ClientConnectionError:
             raise MainServerRequestException('Ошибка подключения к главному серверу')

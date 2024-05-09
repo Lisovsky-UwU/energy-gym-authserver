@@ -1,4 +1,5 @@
-from quart import Blueprint, request, jsonify
+import io
+from quart import Blueprint, request, jsonify, send_file
 from loguru import logger
 
 from ...orm import SessionCtx
@@ -40,11 +41,14 @@ async def main_server_api(path: str):
     if method.needjson and request.headers.get('Content-Type') != 'application/json':
         raise InvalidRequestException('Тело запроса должно быть в формате JSON')
     
-    return jsonify(
-        await MainServerService().send_request(
-            method   = request.method,
-            endpoint = method.endpoint,
-            user_id  = user_id,
-            body     = (await request.get_json()),
-        )
+    response = await MainServerService().send_request(
+        method   = request.method,
+        endpoint = method.endpoint,
+        user_id  = user_id,
+        body     = (await request.get_json()),
     )
+
+    if isinstance(response, (dict, list)):
+        return jsonify(response)
+    else:
+        return await send_file(io.BytesIO(response), attachment_filename='result.xlsx')

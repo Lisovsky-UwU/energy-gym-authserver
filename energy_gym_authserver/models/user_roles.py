@@ -29,6 +29,7 @@ class UserRole(Enum):
         AccessRights.USER.DELETE,
         AccessRights.VISIT.GET,
         AccessRights.VISIT.EDIT,
+        AccessRights.REPORTS
     ]
 
     ADMIN = [

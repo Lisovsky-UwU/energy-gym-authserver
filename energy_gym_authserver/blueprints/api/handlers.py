@@ -10,21 +10,22 @@ from ...exceptions import EnergyGymAuthServerException
 
 @api.after_request
 async def response_format(response: quart.Response):
-    body = await response.get_json()
-    if isinstance(body, (dict, list)):
-        logger.debug(f'{quart.request.remote_addr} [{quart.request.method}] {quart.request.path} <- ({response.status_code}) {body}')
-    else:
-        logger.debug(f'{quart.request.remote_addr} [{quart.request.method}] {quart.request.path} <- ({response.status_code}) Not json data')
+    if response.is_json:
+        body = await response.get_json()
+        if isinstance(body, (dict, list)):
+            logger.debug(f'{quart.request.remote_addr} [{quart.request.method}] {quart.request.path} <- ({response.status_code}) {body}')
+        else:
+            logger.debug(f'{quart.request.remote_addr} [{quart.request.method}] {quart.request.path} <- ({response.status_code}) Not json data')
 
-    if not (isinstance(body, dict) and body.get('error', False)):
-        response.data = json.dumps({'error': False, 'data': body})
+        if not (isinstance(body, dict) and body.get('error', False)):
+            response.data = json.dumps({'error': False, 'data': body})
 
     return response
 
 
 @api.before_request
 async def json_chek():
-    # sleep(3)
+    sleep(2)
     logger.debug(f'{quart.request.remote_addr} [{quart.request.method}] {quart.request.path} -> {await quart.request.data}')
     if await quart.request.get_json() and not quart.request.is_json:
         raise InvalidRequestException('Тело запроса должно быть в формате JSON')
