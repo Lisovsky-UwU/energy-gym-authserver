@@ -44,4 +44,10 @@ class MainServerApiMethods(Enum):
     VISIT_GET          = ApiMethod(access = AccessRights.VISIT.GET,            endpoint = 'visit/get',          needjson = False)
     VISIT_EDIT         = ApiMethod(access = AccessRights.VISIT.EDIT,           endpoint = 'visit/edit',         needjson = True)
 
+    NEW_CREATE         = ApiMethod(access = AccessRights.NEWS.CREATE,          endpoint = 'new/create',         needjson = True)
+    NEW_GET            = ApiMethod(access = None,                              endpoint = 'new/get',            needjson = False)
+    NEW_GET_ANY        = ApiMethod(access = AccessRights.NEWS.GETANY,          endpoint = 'new/get',            needjson = False)
+    NEW_EDIT           = ApiMethod(access = AccessRights.NEWS.EDIT,            endpoint = 'new/edit',           needjson = True)
+    NEW_DELETE         = ApiMethod(access = AccessRights.NEWS.DELETE,          endpoint = 'new/delete',         needjson = True)
+
     REPORT_VISITS      = ApiMethod(access = AccessRights.REPORTS,              endpoint = 'report/visits',      needjson = True)

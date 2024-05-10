@@ -15,28 +15,29 @@ main_server_bl = Blueprint('main_server', __name__)
 
 @main_server_bl.route('/<path:path>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 async def main_server_api(path: str):
-    token = request.headers.get('Authorization')
-    if token is None:
-        raise LoginError('Отсутствует токен в заголовке')
-
-    with SessionCtx() as session:
-        user = AuthController(
-            UserDBService(session)
-        ).get_user(token)
-
-        user_id = user.id
-        user_role = user.role
-
     try:
         method = MainServerApiMethods[path.upper().replace('-', '_').replace('/', '_')].value
     except KeyError:
-        logger.warning(f'Попытка получить доступ к несуществующему методу пользователем с ID {user_id}: path = {path}')
+        logger.warning(f'Попытка получить доступ к несуществующему методу: path = {path}, addr = {request.remote_addr}')
         raise AccessRightsException('Недостаточно прав')
 
-    
-    if method.access not in UserRole[user_role.name].value:
-        logger.warning(f'Попытка получить доступ к методу без достаточных прав пользователем с ID {user_id}: path = {path}')
-        raise AccessRightsException('Недостаточно прав')
+    user_id = None
+    if method.access is not None:
+        token = request.headers.get('Authorization')
+        if token is None:
+            raise LoginError('Отсутствует токен в заголовке')
+
+        with SessionCtx() as session:
+            user = AuthController(
+                UserDBService(session)
+            ).get_user(token)
+
+            user_id = user.id
+            user_role = user.role
+        
+        if method.access not in UserRole[user_role.name].value:
+            logger.warning(f'Попытка получить доступ к методу без достаточных прав пользователем с ID {user_id}: path = {path}')
+            raise AccessRightsException('Недостаточно прав')
 
     if method.needjson and request.headers.get('Content-Type') != 'application/json':
         raise InvalidRequestException('Тело запроса должно быть в формате JSON')
@@ -44,7 +45,7 @@ async def main_server_api(path: str):
     response = await MainServerService().send_request(
         method   = request.method,
         endpoint = method.endpoint,
-        user_id  = user_id,
+        user_id  = user_id if user_id is not None else None,
         body     = (await request.get_json()),
     )
 

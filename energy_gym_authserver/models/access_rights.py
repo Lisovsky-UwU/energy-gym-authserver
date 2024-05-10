@@ -95,6 +95,26 @@ class VisitAccess:
         ]
 
 
+class NewsAccess:
+    '''Права доступов к новостям спортивного зала'''
+
+    CREATE = 'new create'
+    GET    = 'new get'
+    GETANY = 'new get any'
+    EDIT   = 'new edit'
+    DELETE = 'new delete'
+
+    @classmethod
+    def get_all_rights(cls) -> List:
+        return [
+            cls.CREATE,
+            cls.GET,
+            cls.GETANY,
+            cls.EDIT,
+            cls.DELETE,
+        ]
+
+
 class AccessRights:
     '''Права доступов для редактирования и получения данных'''
 
@@ -103,6 +123,7 @@ class AccessRights:
     USER          = UserAccess
     ENTRY         = EntyAccess
     VISIT         = VisitAccess
+    NEWS          = NewsAccess
     REPORTS       = 'generate reports'
 
     @classmethod
@@ -113,5 +134,6 @@ class AccessRights:
             *cls.USER.get_all_rights(),
             *cls.ENTRY.get_all_rights(),
             *cls.VISIT.get_all_rights(),
+            *cls.NEWS.get_all_rights(),
             cls.REPORTS
         ]
