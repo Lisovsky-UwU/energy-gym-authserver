@@ -110,6 +110,15 @@ async def login_coach():
     return await do_login(data, UserRole.COACH)
 
 
+@auth_bl.post('/login/admin')
+async def login_admin():
+    data = await request.get_json()
+    if data is None:
+        raise InvalidRequestException('Тело запроса должно быть в формате JSON')
+
+    return await do_login(data, UserRole.ADMIN)
+
+
 @auth_bl.get('/check-login')
 async def check_login():
     token = request.headers.get('Authorization')
