@@ -17,6 +17,7 @@ class User(Base):
     surname      : Mapped[str]
     group        : Mapped[str]
     hid          : Mapped[str]
+    image        : Mapped[Optional[str]]
     role         : Mapped[UserRole] = mapped_column(Enum(UserRole))
     deleted      : Mapped[bool] = mapped_column(server_default='false')
 
