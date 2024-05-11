@@ -1,3 +1,4 @@
+import os
 import sys
 from loguru import logger
 
@@ -9,5 +10,5 @@ def init_logger():
         'format': '{time:HH:mm:ss.SSS} | <lvl>[{level}]</lvl> | <{thread.name}>::{file}({line}) | <lvl>{message}</lvl>'
     }
 
-    logger.add('log\\{time:YYYY-MM-DD}.log', retention="10 days", **log_config)
+    logger.add(f'log{os.sep}{{time:YYYY-MM-DD}}.log', retention="10 days", **log_config)
     logger.add(sys.stdout, **log_config)
