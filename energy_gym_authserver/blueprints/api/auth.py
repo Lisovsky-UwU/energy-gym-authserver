@@ -1,3 +1,5 @@
+import json
+from typing import List
 from quart import Blueprint, request
 from loguru import logger
 
@@ -7,9 +9,20 @@ from ...controllers import AuthController
 from ...models import UserRole
 from ...exceptions import InvalidRequestException, RegistrationError, LoginError
 from ...utils import generate_hid
+from ...configmodule import config
 
 
 auth_bl = Blueprint('auth', __name__)
+
+_student_cards_list: List[int] = None
+
+
+def student_card_check_exists(student_card: str):
+    global _student_cards_list
+    if _student_cards_list is None:
+        _student_cards_list = list(map(str, json.load(open(config.common.student_cards_file))))
+    
+    return student_card in _student_cards_list
 
 
 @auth_bl.post('/check-studcard')
@@ -20,10 +33,12 @@ async def check_studcard():
     
     student_card = str(data.get('studentCard'))
     
-    if len(student_card) != 8:
-        raise InvalidRequestException('Длина студенческого билета должна быть 8 символов')
+    if len(student_card) != 8 and len(student_card) != 7:
+        raise InvalidRequestException('Длина студенческого билета должна быть 7-8 символов')
     if not student_card.isdigit():
         raise InvalidRequestException('Студенческий билет должен быть числом')
+    if not student_card_check_exists(student_card):
+        raise InvalidRequestException('Номер студенческого не найден')
     
     with SessionCtx() as session:
         user_serivce = UserDBService(session)
@@ -49,10 +64,15 @@ async def signup():
 
         student_card = str(data.get('studentCard'))
     
-        if len(student_card) != 8:
-            raise InvalidRequestException('Длина студенческого билета должна быть 8 символов')
+        # Студенческие билеты вроде как должны быть по 8 символов, однако при экспорте тестовых данных
+        # с реальных студаков был один на 7 символов. Может это кривой экспорт и потеряли цифру просто,
+        # но условие сделать надо
+        if len(student_card) != 8 and len(student_card) != 7:
+            raise InvalidRequestException('Длина студенческого билета должна быть 7-8 символов')
         if not student_card.isdigit():
             raise InvalidRequestException('Студенческий билет должен быть числом')
+        if not student_card_check_exists(student_card):
+            raise InvalidRequestException('Номер студенческого не найден')
 
         user = user_service.create(
             User(

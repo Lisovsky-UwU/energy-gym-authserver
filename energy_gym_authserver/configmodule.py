@@ -11,6 +11,7 @@ class CommonSettings(Fieldset):
     use_dev         = Field[bool](True).label('Использовать ли окружение разработки')
     secret_key      = Field[str](uuid4()).label('Секретный ключ для генерации токенов авторизации')
     datetime_format = Field[str]('%d-%m-%Y %H:%M:%S').label('Формат для даты и времени')
+    student_cards_file = Field[str]('studlist.json').label('Название файла в формате JSON со списком студентов')
 
 
 class LocalServerSettings(Fieldset):
