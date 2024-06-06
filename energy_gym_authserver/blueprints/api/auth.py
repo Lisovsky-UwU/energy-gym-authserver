@@ -94,11 +94,11 @@ async def signup():
         }
 
 
-async def do_login(data, user_role: UserRole) -> dict:
+async def do_login(data, user_roles) -> dict:
     with SessionCtx() as session:
         user_service = UserDBService(session)
 
-        user = user_service.get_by_student_card(data.get('login'), user_role)
+        user = user_service.get_by_student_card(data.get('login'), user_roles)
         if user is None:
             raise LoginError('Неверный логин или пароль')
         
@@ -118,7 +118,7 @@ async def login():
     if data is None:
         raise InvalidRequestException('Тело запроса должно быть в формате JSON')
 
-    return await do_login(data, UserRole.STUDENT)
+    return await do_login(data, [ UserRole.STUDENT, UserRole.BLOCKED ])
 
 
 @auth_bl.post('/login/coach')
@@ -127,7 +127,7 @@ async def login_coach():
     if data is None:
         raise InvalidRequestException('Тело запроса должно быть в формате JSON')
 
-    return await do_login(data, UserRole.COACH)
+    return await do_login(data, [ UserRole.COACH ])
 
 
 @auth_bl.post('/login/admin')
@@ -136,7 +136,7 @@ async def login_admin():
     if data is None:
         raise InvalidRequestException('Тело запроса должно быть в формате JSON')
 
-    return await do_login(data, UserRole.ADMIN)
+    return await do_login(data, [ UserRole.ADMIN ])
 
 
 @auth_bl.get('/check-login')

@@ -15,6 +15,14 @@ class UserRole(Enum):
         AccessRights.USER.DELETE
     ]
 
+    BLOCKED = [
+        AccessRights.ADS.GET,
+        AccessRights.USER.EDIT,
+        AccessRights.USER.DELETE,
+        AccessRights.ENTRY.GET,
+        AccessRights.ENTRY.DELETE
+    ]
+
     COACH = [
         AccessRights.ADS.GET,
         AccessRights.ADS.EDIT,
