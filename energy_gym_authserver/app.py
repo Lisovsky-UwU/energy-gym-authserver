@@ -6,8 +6,7 @@ from hypercorn.asyncio import serve
 from quart_cors import cors
 
 from .configmodule import config
-from .blueprints import api_bl, webgui_bl
-from .services.database import UserDBService
+from .blueprints import api_bl, webgui_bl, media_bl
 
 
 def build_app() -> Quart:
@@ -21,6 +20,7 @@ def build_app() -> Quart:
     logger.info('Регистрация шаблонов')
     app.register_blueprint(api_bl, url_prefix='/api/v1')
     app.register_blueprint(webgui_bl)
+    app.register_blueprint(media_bl, url_prefix='/media')
 
     if config.common.use_dev:
         logger.debug('Используется окружение разработки')

@@ -33,6 +33,7 @@ class User(Base):
             'secondname'  : self.secondname,
             'surname'     : self.surname,
             'group'       : self.group,
+            'image'       : self.image,
             'role'        : self.role.name if isinstance(self.role, UserRole) else self.role,
         }
         
