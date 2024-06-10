@@ -11,7 +11,7 @@ class UserRole(Enum):
         AccessRights.ENTRY.CREATE,
         AccessRights.ENTRY.GET,
         AccessRights.ENTRY.DELETE,
-        AccessRights.USER.EDIT,
+        # AccessRights.USER.EDIT,
         AccessRights.USER.DELETE
     ]
 
