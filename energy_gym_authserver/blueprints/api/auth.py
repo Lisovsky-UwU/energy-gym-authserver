@@ -1,5 +1,5 @@
 import json
-from typing import List
+from typing import List, Dict
 from quart import Blueprint, request
 from loguru import logger
 
@@ -17,12 +17,21 @@ auth_bl = Blueprint('auth', __name__)
 _student_cards_list: List[int] = None
 
 
-def student_card_check_exists(student_card: str):
+def _get_student_json() -> Dict[str, Dict[str, str]]:
     global _student_cards_list
     if _student_cards_list is None:
-        _student_cards_list = list(map(str, json.load(open(config.common.student_cards_file))))
+        _student_cards_list = json.load(open(config.common.student_cards_file, encoding='utf-8'))
     
-    return student_card in _student_cards_list
+    return _student_cards_list
+
+
+def student_card_check_exists(student_card: str):
+    return student_card in _get_student_json().keys()
+
+
+def check_student_data(student_card: str, firstname: str, secondname: str, group: str) -> bool:
+    student_data = _get_student_json().get(student_card)
+    return student_data is not None and student_data['firstname'] == firstname and student_data['secondname'] == secondname and student_data['group'] == group
 
 
 @auth_bl.post('/check-studcard')
@@ -71,8 +80,8 @@ async def signup():
             raise InvalidRequestException('Длина студенческого билета должна быть 7-8 символов')
         if not student_card.isdigit():
             raise InvalidRequestException('Студенческий билет должен быть числом')
-        if not student_card_check_exists(student_card):
-            raise InvalidRequestException('Номер студенческого не найден')
+        if not check_student_data(student_card, data['firstname'], data['secondname'], data['group']):
+            raise InvalidRequestException('Студент не найден')
 
         user = user_service.create(
             User(
